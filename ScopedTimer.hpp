@@ -3,26 +3,54 @@
 #include <chrono>
 #include <string>
 #include <iomanip>
+#include <sstream>
 
 class ScopedTimer {
     using Clock = std::chrono::high_resolution_clock;
 
+    enum class TimeUnit {
+        Nanoseconds,
+        Microseconds,
+        Milliseconds,
+        Seconds
+    };
+
     std::string _name;
     Clock::time_point _start_tp;
+    TimeUnit _unit;
+    std::ostream& _output;
 
 public:
-    explicit ScopedTimer(const std::string& name)
-        : _name(name), _start_tp(Clock::now()) {}
+    explicit ScopedTimer(const std::string& name, TimeUnit unit = TimeUnit::Microseconds, std::ostream& output = std::cout)
+        : _name(name), _start_tp(Clock::now()), _unit(unit), _output(output) {}
 
     ~ScopedTimer() {
         auto end_tp = Clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end_tp - _start_tp);
 
-        std::ios_base::fmtflags f(std::cout.flags());
-        std::cout << "[TIME] " << std::left << std::setw(30) << _name << ": "
-                  << std::fixed << std::setprecision(4)
-                  << duration.count() / 1000.0 << " us" << std::endl;
-        std::cout.flags(f);
+        std::ostringstream oss;
+        std::ios_base::fmtflags f(oss.flags());
+        
+        oss << "[TIME] " << std::left << std::setw(30) << _name << ": "
+            << std::fixed << std::setprecision(4);
+
+        switch (_unit) {
+            case TimeUnit::Nanoseconds:
+                oss << duration.count() << " ns";
+                break;
+            case TimeUnit::Microseconds:
+                oss << duration.count() / 1000.0 << " us";
+                break;
+            case TimeUnit::Milliseconds:
+                oss << duration.count() / 1000000.0 << " ms";
+                break;
+            case TimeUnit::Seconds:
+                oss << duration.count() / 1000000000.0 << " s";
+                break;
+        }
+
+        oss.flags(f);
+        _output << oss.str() << std::endl;
     }
 
     ScopedTimer(const ScopedTimer&) = delete;
