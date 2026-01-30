@@ -26,6 +26,29 @@ private:
     TimeUnit _unit;
     std::ostream& _output;
 
+std::string createLogString(std::chrono::nanoseconds duration) const {
+        std::ostringstream oss;
+        oss << "[TIME] " << std::left << std::setw(30) << _name << ": "
+            << std::fixed << std::setprecision(4);
+
+        switch (_unit) {
+            case TimeUnit::Nanoseconds:
+                oss << duration.count() << " ns";
+                break;
+            case TimeUnit::Microseconds:
+                oss << duration.count() / 1000.0 << " us";
+                break;
+            case TimeUnit::Milliseconds:
+                oss << duration.count() / 1000000.0 << " ms";
+                break;
+            case TimeUnit::Seconds:
+                oss << duration.count() / 1000000000.0 << " s";
+                break;
+        }
+        oss << "\n";
+        return oss.str();
+    }
+
 public:
     explicit AccumulateTimer(const std::string& name, TimeUnit unit = TimeUnit::Microseconds, std::ostream& output = std::cout) 
         : _name(name), _total_duration(0), _is_running(false), _unit(unit), _output(output) {}
@@ -54,24 +77,7 @@ public:
             end();
             std::cerr << "[INFO] " << _name << ": Timer was still running at destruction. Auto-ended." << std::endl;
         }
-        std::ostringstream oss;
-        oss << "[TIME] " << std::left << std::setw(30) << _name << ": "
-            << std::fixed << std::setprecision(4);
-        switch (_unit) {
-            case TimeUnit::Nanoseconds:
-                oss << _total_duration.count() << " ns";
-                break;
-            case TimeUnit::Microseconds:
-                oss << _total_duration.count() / 1000.0 << " us";
-                break;
-            case TimeUnit::Milliseconds:
-                oss << _total_duration.count() / 1000000.0 << " ms";
-                break;
-            case TimeUnit::Seconds:
-                oss << _total_duration.count() / 1000000000.0 << " s";
-                break;
-        }
-        _output << oss.str() << std::endl;
+        _output << createLogString(_total_duration);
     }
 
     AccumulateTimer(const AccumulateTimer&) = delete;

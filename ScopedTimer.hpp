@@ -24,16 +24,11 @@ private:
     TimeUnit _unit;
     std::ostream& _output;
 
-public:
-    explicit ScopedTimer(const std::string& name, TimeUnit unit = TimeUnit::Microseconds, std::ostream& output = std::cout)
-        : _name(name), _start_tp(Clock::now()), _unit(unit), _output(output) {}
-
-    ~ScopedTimer() {
-        auto end_tp = Clock::now();
-        auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end_tp - _start_tp);
+    std::string createLogString(std::chrono::nanoseconds duration) const {
         std::ostringstream oss;
         oss << "[TIME] " << std::left << std::setw(30) << _name << ": "
             << std::fixed << std::setprecision(4);
+
         switch (_unit) {
             case TimeUnit::Nanoseconds:
                 oss << duration.count() << " ns";
@@ -48,7 +43,18 @@ public:
                 oss << duration.count() / 1000000000.0 << " s";
                 break;
         }
-        _output << oss.str() << std::endl;
+        oss << "\n";
+        return oss.str();
+    }
+
+public:
+    explicit ScopedTimer(const std::string& name, TimeUnit unit = TimeUnit::Microseconds, std::ostream& output = std::cout)
+        : _name(name), _start_tp(Clock::now()), _unit(unit), _output(output) {}
+
+    ~ScopedTimer() {
+        auto end_tp = Clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end_tp - _start_tp);
+        _output << createLogString(duration);
     }
 
     ScopedTimer(const ScopedTimer&) = delete;
