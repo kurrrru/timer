@@ -6,7 +6,8 @@
 #include <sstream>
 
 class ScopedTimer {
-    using Clock = std::chrono::high_resolution_clock;
+private:
+    using Clock = std::chrono::steady_clock;
 
     enum class TimeUnit {
         Nanoseconds,
@@ -27,13 +28,9 @@ public:
     ~ScopedTimer() {
         auto end_tp = Clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end_tp - _start_tp);
-
         std::ostringstream oss;
-        std::ios_base::fmtflags f(oss.flags());
-        
         oss << "[TIME] " << std::left << std::setw(30) << _name << ": "
             << std::fixed << std::setprecision(4);
-
         switch (_unit) {
             case TimeUnit::Nanoseconds:
                 oss << duration.count() << " ns";
@@ -48,8 +45,6 @@ public:
                 oss << duration.count() / 1000000000.0 << " s";
                 break;
         }
-
-        oss.flags(f);
         _output << oss.str() << std::endl;
     }
 

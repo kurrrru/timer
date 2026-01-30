@@ -6,7 +6,8 @@
 #include <sstream>
 
 class AccumulateTimer {
-    using Clock = std::chrono::high_resolution_clock;
+private:
+    using Clock = std::chrono::steady_clock;
     
     enum class TimeUnit {
         Nanoseconds,
@@ -50,13 +51,9 @@ public:
             end();
             std::cerr << "[INFO] " << _name << ": Timer was still running at destruction. Auto-ended." << std::endl;
         }
-
         std::ostringstream oss;
-        std::ios_base::fmtflags f(oss.flags());
-        
         oss << "[TIME] " << std::left << std::setw(30) << _name << ": "
             << std::fixed << std::setprecision(4);
-
         switch (_unit) {
             case TimeUnit::Nanoseconds:
                 oss << _total_duration.count() << " ns";
@@ -71,8 +68,6 @@ public:
                 oss << _total_duration.count() / 1000000000.0 << " s";
                 break;
         }
-
-        oss.flags(f);
         _output << oss.str() << std::endl;
     }
 
