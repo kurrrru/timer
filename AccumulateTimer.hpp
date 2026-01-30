@@ -5,6 +5,8 @@
 #include <iomanip>
 #include <sstream>
 
+namespace toolbox {
+
 class AccumulateTimer {
 public:
     using Clock = std::chrono::steady_clock;
@@ -75,3 +77,5 @@ public:
     AccumulateTimer(const AccumulateTimer&) = delete;
     AccumulateTimer& operator=(const AccumulateTimer&) = delete;
 };
+
+}  // namespace toolbox

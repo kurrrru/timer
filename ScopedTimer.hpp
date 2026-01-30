@@ -5,6 +5,8 @@
 #include <iomanip>
 #include <sstream>
 
+namespace toolbox {
+
 class ScopedTimer {
 public:
     using Clock = std::chrono::steady_clock;
@@ -52,3 +54,5 @@ public:
     ScopedTimer(const ScopedTimer&) = delete;
     ScopedTimer& operator=(const ScopedTimer&) = delete;
 };
+
+}  // namespace toolbox
