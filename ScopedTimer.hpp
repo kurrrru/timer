@@ -6,7 +6,7 @@
 #include <sstream>
 
 class ScopedTimer {
-private:
+public:
     using Clock = std::chrono::steady_clock;
 
     enum class TimeUnit {
@@ -16,6 +16,7 @@ private:
         Seconds
     };
 
+private:
     std::string _name;
     Clock::time_point _start_tp;
     TimeUnit _unit;
