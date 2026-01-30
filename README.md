@@ -1,4 +1,4 @@
-# C++ Timer Toolbox
+# Simple Timer in C++
 
 A lightweight, header-only C++ timer library for benchmarking and performance profiling.  
 Designed for minimal overhead and ease of use in competitive programming and research projects.
