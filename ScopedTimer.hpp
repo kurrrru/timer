@@ -42,7 +42,7 @@ private:
         oss << toUnit(duration, _unit);
         switch (_unit) {
             case TimeUnit::Nanoseconds:
-                oss  << " ns";
+                oss << " ns";
                 break;
             case TimeUnit::Microseconds:
                 oss << " us";
