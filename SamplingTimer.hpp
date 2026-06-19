@@ -71,6 +71,16 @@ public:
     double total(TimeUnit u) const {
         return toUnit(total(), u);
     }
+    double min(TimeUnit u) const {
+        if (_samples.empty()) return 0.0;
+        auto it = std::min_element(_samples.begin(), _samples.end());
+        return toUnit(*it, u);
+    }
+    double max(TimeUnit u) const {
+        if (_samples.empty()) return 0.0;
+        auto it = std::max_element(_samples.begin(), _samples.end());
+        return toUnit(*it, u);
+    }
     double mean(TimeUnit u) const {
         if (_samples.empty()) return 0.0;
         return toUnit(total(), u) / static_cast<double>(_samples.size());
@@ -114,6 +124,10 @@ public:
         std::ostringstream oss;
         oss << "[STATS] " << _name
             << " n=" << count()
+            << " total=" << total(_unit)
+            << " min=" << min(_unit)
+            << " max=" << max(_unit)
+            << " stddev=" << stddev(_unit)
             << " mean=" << mean(_unit)
             << " p50=" << median(_unit)
             << " p95=" << percentile(95.0, _unit)
