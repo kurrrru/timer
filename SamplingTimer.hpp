@@ -5,6 +5,7 @@
 #include <vector>
 #include <algorithm>
 #include <cmath>
+#include <sstream>
 
 namespace toolbox {
 
@@ -76,6 +77,10 @@ public:
     }
     double percentile(double p, TimeUnit u) const {  // p in [0,100], 線形補間
         if (_samples.empty()) return 0.0;
+        if (p < 0.0 || p > 100.0) {
+            std::cerr << "[WARNING] " << _name << ": percentile(" << p << ") must be in [0,100]!\n";
+            return 0.0;
+        }
         std::vector<std::chrono::nanoseconds> s(_samples);
         std::sort(s.begin(), s.end());
         double rank = (p / 100.0) * (s.size() - 1);
@@ -101,13 +106,19 @@ public:
     }
 
     ~SamplingTimer() {
+        if (_is_running) {
+            end();
+            std::cerr << "[INFO] " << _name << ": Timer was still running at destruction. Auto-ended." << std::endl;
+        }
         if (!_auto_log || _samples.empty()) return;
-        _output << "[STATS] " << _name
-                << " n=" << count()
-                << " mean=" << mean(_unit)
-                << " p50=" << median(_unit)
-                << " p95=" << percentile(95.0, _unit)
-                << " p99=" << percentile(99.0, _unit) << "\n";
+        std::ostringstream oss;
+        oss << "[STATS] " << _name
+            << " n=" << count()
+            << " mean=" << mean(_unit)
+            << " p50=" << median(_unit)
+            << " p95=" << percentile(95.0, _unit)
+            << " p99=" << percentile(99.0, _unit) << "\n";
+        _output << oss.str();
     }
 
     SamplingTimer(const SamplingTimer&)            = delete;
