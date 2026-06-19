@@ -41,7 +41,7 @@ private:
 public:
     explicit SamplingTimer(const std::string& name, TimeUnit unit = TimeUnit::Microseconds,
             std::ostream& output = std::cout)
-        : _name(name), _is_running(false), _unit(unit), _output(output), _auto_log(false) {}
+        : _name(name), _is_running(false), _unit(unit), _output(output), _auto_log(true) {}
 
     void reserve(std::size_t n) { _samples.reserve(n); }
     void setAutoLog(bool on)    { _auto_log = on; }
