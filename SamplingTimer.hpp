@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <cmath>
 #include <sstream>
+#include <cstddef>
 
 namespace toolbox {
 
@@ -47,17 +48,22 @@ public:
     void setAutoLog(bool on)    { _auto_log = on; }
 
     void start() {
-        if (_is_running) { std::cerr << "[WARNING] " << _name << ": start() while running!\n"; return; }
+        if (_is_running) {
+            std::cerr << "[WARNING] " << _name << ": start() called while already running!" << std::endl;
+            return;
+        }
         _is_running = true;
         _start_tp = Clock::now();
     }
     void end() {
         auto now = Clock::now();
-        if (!_is_running) { std::cerr << "[WARNING] " << _name << ": end() without start()!\n"; return; }
+        if (!_is_running) {
+            std::cerr << "[WARNING] " << _name << ": end() called without start()!" << std::endl;
+            return;
+        }
         _samples.push_back(std::chrono::duration_cast<std::chrono::nanoseconds>(now - _start_tp));
         _is_running = false;
     }
-    void reset() { _samples.clear(); _is_running = false; }
 
     // --- 取得系（出力しない）---
     std::size_t count() const { return _samples.size(); }
@@ -88,7 +94,7 @@ public:
     double percentile(double p, TimeUnit u) const {  // p in [0,100], 線形補間
         if (_samples.empty()) return 0.0;
         if (p < 0.0 || p > 100.0) {
-            std::cerr << "[WARNING] " << _name << ": percentile(" << p << ") must be in [0,100]!\n";
+            std::cerr << "[WARNING] " << _name << ": percentile(" << p << ") must be in [0,100]!" << std::endl;
             return 0.0;
         }
         std::vector<std::chrono::nanoseconds> s(_samples);
