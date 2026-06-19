@@ -82,6 +82,8 @@ public:
 
     AccumulateTimer(const AccumulateTimer&) = delete;
     AccumulateTimer& operator=(const AccumulateTimer&) = delete;
+    AccumulateTimer(AccumulateTimer&&) = delete;
+    AccumulateTimer& operator=(AccumulateTimer&&) = delete;
 };
 
 }  // namespace toolbox

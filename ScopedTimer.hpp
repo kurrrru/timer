@@ -59,6 +59,8 @@ public:
 
     ScopedTimer(const ScopedTimer&) = delete;
     ScopedTimer& operator=(const ScopedTimer&) = delete;
+    ScopedTimer(ScopedTimer&&) = delete;
+    ScopedTimer& operator=(ScopedTimer&&) = delete;
 };
 
 }  // namespace toolbox
