@@ -88,7 +88,7 @@ public:
     double median(TimeUnit u) const {
         return percentile(50.0, u);
     }
-    double stddev(TimeUnit u) const {  // 不偏標準偏差(n-1)
+    double stddev(TimeUnit u) const {  // 不偏標準偏差(unbiased standard deviation)(n-1)
         if (_samples.size() < 2) {
             return 0.0;
         }
