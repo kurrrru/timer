@@ -74,24 +74,40 @@ public:
         for (auto v : _samples) s += v;
         return s;
     }
-    double total(TimeUnit u = this->_unit) const {
+    double total(TimeUnit u) const {
         return toUnit(total(), u);
     }
-    double min(TimeUnit u = this->_unit) const {
+    double total() const {
+        return total(_unit);
+    }
+
+    double min(TimeUnit u) const {
         if (_samples.empty()) return 0.0;
         auto it = std::min_element(_samples.begin(), _samples.end());
         return toUnit(*it, u);
     }
-    double max(TimeUnit u = this->_unit) const {
+    double min() const {
+        return min(_unit);
+    }
+
+    double max(TimeUnit u) const {
         if (_samples.empty()) return 0.0;
         auto it = std::max_element(_samples.begin(), _samples.end());
         return toUnit(*it, u);
     }
-    double mean(TimeUnit u = this->_unit) const {
+    double max() const {
+        return max(_unit);
+    }
+
+    double mean(TimeUnit u) const {
         if (_samples.empty()) return 0.0;
         return toUnit(total(), u) / static_cast<double>(_samples.size());
     }
-    double percentile(double p, TimeUnit u = this->_unit) const {  // p in [0,100], 線形補間
+    double mean() const {
+        return mean(_unit);
+    }
+
+    double percentile(double p, TimeUnit u) const {  // p in [0,100], 線形補間
         if (_samples.empty()) return 0.0;
         if (p < 0.0 || p > 100.0) {
             std::cerr << "[WARNING] " << _name << ": percentile(" << p << ") must be in [0,100]!" << std::endl;
@@ -106,10 +122,18 @@ public:
         double b = toUnit(s[std::min(lo + 1, s.size() - 1)], u);
         return a + (b - a) * frac;
     }
-    double median(TimeUnit u = this->_unit) const {
+    double percentile(double p) const {
+        return percentile(p, _unit);
+    }
+
+    double median(TimeUnit u) const {
         return percentile(50.0, u);
     }
-    double stddev(TimeUnit u = this->_unit) const {  // 不偏標準偏差(unbiased standard deviation)(n-1)
+    double median() const {
+        return median(_unit);
+    }
+
+    double stddev(TimeUnit u) const {  // 不偏標準偏差(unbiased standard deviation)(n-1)
         if (_samples.size() < 2) {
             return 0.0;
         }
@@ -119,6 +143,9 @@ public:
             acc += x * x;
         }
         return std::sqrt(acc / (_samples.size() - 1));
+    }
+    double stddev() const {
+        return stddev(_unit);
     }
 
     ~SamplingTimer() {
