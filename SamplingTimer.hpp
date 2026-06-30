@@ -69,13 +69,12 @@ public:
     std::size_t count() const { return _samples.size(); }
     const std::vector<std::chrono::nanoseconds>& samples() const { return _samples; }
 
-    std::chrono::nanoseconds total() const {
-        std::chrono::nanoseconds s{0};
-        for (auto v : _samples) s += v;
-        return s;
-    }
     double total(TimeUnit u) const {
-        return toUnit(total(), u);
+        std::chrono::nanoseconds s{0};
+        for (auto v : _samples) {
+            s += v;
+        }
+        return toUnit(s, u);
     }
     double total() const {
         return total(_unit);
@@ -101,7 +100,7 @@ public:
 
     double mean(TimeUnit u) const {
         if (_samples.empty()) return 0.0;
-        return toUnit(total(), u) / static_cast<double>(_samples.size());
+        return total(u) / static_cast<double>(_samples.size());
     }
     double mean() const {
         return mean(_unit);
